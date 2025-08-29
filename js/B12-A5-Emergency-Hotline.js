@@ -1,74 +1,77 @@
-
-   document.addEventListener("DOMContentLoaded", function () {
-    let heartCount = 0;
-
-    const heartCounter = document.querySelector(".heart-count");
-    const heartIcons = document.querySelectorAll(".fa-heart");
-
-    heartIcons.forEach(icon => {
-        icon.addEventListener("click", () => {
-            heartCount++;
-            heartCounter.textContent = heartCount;
-        });
-    });
-});
-
-
-  document.addEventListener("DOMContentLoaded", function () {
-    let coins = 100;
-    const coinDisplay = document.getElementById("coin-count");
-    const callButtons = document.querySelectorAll(".call-btn");
-    const callHistory = document.getElementById("call-history");
-    const clearButton = document.getElementById("clear-history");
-
-
-    coinDisplay.textContent = coins;
-
-
-    callButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const card = this.closest(".card");
-        const serviceName = card.querySelector(".service-name").textContent;
-        const serviceNumber = card.querySelector(".service-number").textContent;
-
-        if (coins < 20) {
-          alert("Not enough coins to make a call.");
-          return;
-        }
-
-
-        alert(`Calling ${serviceName} at ${serviceNumber}`);
-
-
-        coins -= 20;
-        coinDisplay.textContent = coins;
-
-
-        const historyEntry = document.createElement("div");
-        historyEntry.className="bg-gray-200 md-5"
-        historyEntry.textContent = `${serviceName} - ${serviceNumber}`;
-        callHistory.appendChild(historyEntry);
-      });
-    });
-
-
-    clearButton.addEventListener("click", function () {
-      callHistory.innerHTML = "";
-    });
-  });
-
 document.addEventListener("DOMContentLoaded", function () {
-    let coppycount = 0;
 
-    const coppyCounter = document.querySelector(".coppy-number");
-    const coppyIcons = document.querySelectorAll(".fa-coppy");
+  let heartCount = 0;
+  let coins = 100;
+  let copyCount = 1;
 
-    coppyIcons.forEach(icon => {
-        icon.addEventListener("click", () => {
-            coppycount++;
-            coppyCounter.textContent = coppycount;
-            
-        });
+  const heartCounter = document.querySelector(".heart-count");
+  const coinDisplay = document.getElementById("coin-count");
+  const callHistory = document.getElementById("call-history");
+  const clearButton = document.getElementById("clear-history");
+  const copyDisplay = document.querySelector(".coppy-number"); 
 
-    });
+  coinDisplay.textContent = coins;
+
+
+  document.addEventListener("click", function (e) {
+    const target = e.target;
+
+
+    if (target.classList.contains("fa-heart")) {
+      heartCount++;
+      heartCounter.textContent = heartCount;
+    }
+
+
+    if (target.classList.contains("call-btn")) {
+      const card = target.closest(".card");
+      const serviceName = card.querySelector(".service-name").textContent;
+      const serviceNumber = card.querySelector(".service-number").textContent;
+
+      if (coins < 20) {
+        alert("Not enough coins to make a call.");
+        return;
+      }
+
+      alert(`Calling ${serviceName} at ${serviceNumber}`);
+      coins -= 20;
+      coinDisplay.textContent = coins;
+
+      const time = new Date().toLocaleTimeString("en-BD", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+        timeZone: "Asia/Dhaka",
+      });
+
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <div class="flex justify-between items-center bg-gray-100 p-3 rounded-lg mb-2">
+          <div>
+            <p class="font-bold text-xl">${serviceName}</p>
+            <p class="text-gray-600 font-semibold text-xl">${serviceNumber}</p>
+          </div>
+          <span class="text-lg text-gray-500 font-semibold">${time}</span>
+        </div>
+      `;
+      callHistory.appendChild(div);
+    }
+
+    if (target.id === "clear-history") {
+      callHistory.innerHTML = "";
+    }
+
+ 
+    if (target.classList.contains("fa-coppy")) {
+      copyDisplay.innerText = copyCount++;
+
+      const card = target.closest(".card");
+      const numberElement = card.querySelector(".service-number");
+
+      const numberText = numberElement.innerText;
+      navigator.clipboard.writeText(numberText);
+      alert(`The number has been copied : ${numberText}`);
+    }
+  });
 });
